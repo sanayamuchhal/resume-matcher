@@ -7,7 +7,7 @@ def match_resumes(resume_text, job_description):
 
     documents = [resume_text, job_description]
 
-    tfidf = TfidfVectorizer()
+    tfidf = TfidfVectorizer(ngram_range=(1,2))
 
     tfidf_matrix = tfidf.fit_transform(documents)
 

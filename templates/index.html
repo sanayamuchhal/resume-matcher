@@ -1,27 +1,179 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>resume matcher</title>
-    </head>
-    <body>
-        <h1>Resume Matcher</h1>
-        <form method="POST" enctype="multipart/form-data" >
-            <label>Upload Resume:</label>
-            <br><br>
-            <input type="file" name="resume">
-            <br><br>
-            <label>Paste Job Description:</label>
-            <br><br>
-            <textarea rows="10" cols="50" name="job_description"></textarea>
-            <br>
-            <br>
-            <button type="submit">Analyse</button>
-        </form>
-        {% if score %}
 
-    <h2>Match Score: {{ score }}%</h2>
+<head>
+    <title>Resume Analyzer</title>
 
-{% endif %}
-       
-    </body>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Upload Section -->
+        <div class="card">
+
+            <h1>Resume Analyzer</h1>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <label><strong>Upload Resume</strong></label>
+
+                <br><br>
+
+                <input type="file" name="resume">
+
+                <br><br>
+
+                <label><strong>Paste Job Description</strong></label>
+
+                <br><br>
+
+                <textarea
+                    rows="10"
+                    cols="60"
+                    name="job_description">
+                </textarea>
+
+                <br><br>
+
+                <button type="submit">
+                    Analyse Resume
+                </button>
+
+            </form>
+
+        </div>
+
+        {% if tfidf_score %}
+
+        <!-- Match Analysis -->
+        <div class="card">
+
+            <h2>Match Analysis</h2>
+
+            <p>
+                <strong>Semantic Match</strong>
+            </p>
+
+            <progress
+                value="{{ semantic_score }}"
+                max="100"
+                style="width:100%;">
+            </progress>
+
+            <p>{{ semantic_score }}%</p>
+
+            <p>
+                <strong>Keyword Match</strong>
+            </p>
+
+            <progress
+                value="{{ tfidf_score }}"
+                max="100"
+                style="width:100%;">
+            </progress>
+
+            <p>{{ tfidf_score }}%</p>
+
+        </div>
+
+        <!-- Section + Question Analysis -->
+        <div class="grid">
+
+            <!-- Section Analysis -->
+            <div class="card">
+
+                <h2>Section Analysis</h2>
+
+                {% for section in section_results %}
+
+                <div style="margin-bottom:15px;">
+
+                    <strong>{{ section.heading }}</strong>
+
+                    <br>
+
+                    {{ section.score }}%
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- Question Analysis -->
+            <div class="card">
+
+                <h2>Question Analysis</h2>
+
+                {% for item in question_results %}
+
+                <details style="margin-bottom:10px;">
+
+                    <summary>
+
+                        {{ item.question }}
+
+                        ({{ item.score }}%)
+
+                    </summary>
+
+                    <p>
+
+                        <strong>Best Evidence Section:</strong>
+
+                        {{ item.evidence }}
+
+                    </p>
+
+                </details>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- Matched / Missing Keywords -->
+        <div class="grid">
+
+            <div class="card">
+
+                <h2>Matched Keywords</h2>
+
+                {% for word in matched %}
+
+                <span class="badge matched">
+                    {{ word }}
+                </span>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="card">
+
+                <h2>Missing Keywords</h2>
+
+                {% for word in missing %}
+
+                <span class="badge missing">
+                    {{ word }}
+                </span>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
 </html>
